@@ -30,6 +30,13 @@ async function run() {
     const database = client.db("next-hire-auth");
     const jobsCollection = database.collection("jobs");
     const companiesCollection = database.collection("companies");
+    const usersCollection = database.collection("user");
+
+    app.get('/api/users', async (req, res) => {
+      const cursor = usersCollection.find().skip(6);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     app.get('/api/jobs', async (req, res) => {
       const query = {};
@@ -46,14 +53,22 @@ async function run() {
 
     app.post("/api/jobs", async (req, res) => {
         const job = req.body;
-        const result = await jobsCollection.insertOne(job);
+          const newJob = {
+          ...job,
+          createdAt: new Date(),
+        }
+        const result = await jobsCollection.insertOne(newJob);
         res.send(result);
     });
 
     // companies api
     app.post(["/api/companies", "/api/my/companies"], async (req, res) => {
       const company = req.body;
-      const result = await companiesCollection.insertOne(company);
+      const newComapnay = {
+          ...company,
+        createdAt: new Date(),
+      }
+      const result = await companiesCollection.insertOne(newComapnay);
       res.send(result);
     });
 
