@@ -5,7 +5,7 @@ app.use(cors());
 app.use(express.json());
 const port = 5000;
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -51,6 +51,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/api/jobs/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobsCollection.findOne(query);
+      res.send(result);
+    });
+
     app.post("/api/jobs", async (req, res) => {
         const job = req.body;
           const newJob = {
@@ -61,7 +68,7 @@ async function run() {
         res.send(result);
     });
 
-    // companies api
+
     app.post(["/api/companies", "/api/my/companies"], async (req, res) => {
       const company = req.body;
       const newComapnay = {
